@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nenode Chat (Iframe Optimized)</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/brain.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+  />
+  <style>
+    :root {
+      --bg-primary: #fafaf9;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f5f5f4;
+      --text-primary: #1c1917;
+      --text-secondary: #78716c;
+      --accent: #0f766e;
+      --accent-hover: #115e59;
+      --accent-light: #ccfbf1;
+      --user-bg: #f0fdfa;
+      --user-border: #5eead4;
+      --bot-bg: #fafaf9;
+      --border: #e7e5e4;
+      --shadow: rgba(0, 0, 0, 0.02);
+      --header-bg: rgba(250, 250, 249, 0.8);
+    }
+
+    .dark {
+      --bg-primary: #0c0a09;
+      --bg-secondary: #1c1917;
+      --bg-tertiary: #292524;
+      --text-primary: #fafaf9;
+      --text-secondary: #a8a29e;
+      --accent: #14b8a6;
+      --accent-hover: #2dd4bf;
+      --accent-light: #134e4a;
+      --user-bg: #134e4a;
+      --user-border: #14b8a6;
+      --bot-bg: #1c1917;
+      --border: #292524;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --header-bg: rgba(28, 25, 23, 0.8);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      font-family: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    #app-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-primary);
+    }
+
+    header {
+      padding: 1rem;
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      font-weight: 600;
+      font-size: 1.25rem;
+      text-align: center;
+      color: var(--text-primary);
+    }
+
+    #chat-log {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    #chat-log::-webkit-scrollbar {
+      width: 6px;
+    }
+    #chat-log::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    #chat-log::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    .message {
+      max-width: 85%;
+      border-radius: 1rem;
+      padding: 0.75rem 1rem;
+      line-height: 1.4;
+      word-wrap: break-word;
+      animation: messageIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+
+    .user {
+      margin-left: auto;
+      background: var(--user-bg);
+      border: 1px solid var(--user-border);
+      border-left: 3px solid var(--accent);
+      color: var(--text-primary);
+    }
+
+    .bot {
+      background: var(--bot-bg);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+
+    .message-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+      user-select: none;
+    }
+
+    .user .message-avatar {
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      color: white;
+    }
+
+    .bot .message-avatar {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1.5px solid var(--border);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .bot .message-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .message-text {
+      flex: 1;
+      font-size: 0.9rem;
+      font-weight: 400;
+      outline: none;
+    }
+
+    footer {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      background: var(--bg-primary);
+    }
+
+    #chat-input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border-radius: 2rem;
+      border: 1.5px solid var(--border);
+      font-family: "Outfit", sans-serif;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    #chat-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-light);
+    }
+
+    #send-btn {
+      margin-left: 0.5rem;
+      background: var(--accent);
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      color: white;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    #send-btn:hover {
+      background: var(--accent-hover);
+      transform: scale(1.1);
+    }
+
+    #send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: scale(1);
+    }
+
+    /* Empty state */
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      color: var(--text-secondary);
+      font-weight: 300;
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      user-select: none;
+    }
+
+    /* Animations */
+    @keyframes messageIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+      }
+    }
+
+    /* Responsive tweaks for small iframes */
+    @media (max-width: 400px) {
+      header {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+      }
+
+      #chat-input {
+        font-size: 0.9rem;
+      }
+
+      #send-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+      }
+
+      .message-text {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app-container" role="main">
+    <header>Nenode Neural Network Chat</header>
+    <main id="chat-log" aria-live="polite" aria-relevant="additions" role="log">
+      <div class="empty-state" aria-label="Start a conversation">
+        <div class="empty-icon"><i class="fas fa-comments"></i></div>
+        <div>Start a conversation</div>
+      </div>
+    </main>
+    <footer>
+      <form id="chat-form" autocomplete="off">
+        <input
+          type="text"
+          id="chat-input"
+          maxlength="200"
+          placeholder="Type a message..."
+          required
+          aria-label="Type your message"
+        />
+        <button type="submit" id="send-btn" aria-label="Send message" title="Send">
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </form>
+    </footer>
+  </div>
+
+  <script>
+    // Dark mode support
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.classList.add('dark');
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+      if (event.matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    });
+
+    // Global variables
+    let net;
+    let chatData;
+    let currentChatId = "default";
+    let chats = {
+      default: { id: "default", title: "Default Chat", messages: [], createdAt: Date.now(), updatedAt: Date.now() }
+    };
+
+    const chatLog = document.getElementById("chat-log");
+    const chatForm = document.getElementById("chat-form");
+    const chatInput = document.getElementById("chat-input");
+    const sendBtn = document.getElementById("send-btn");
+
+    async function loadData() {
+      try {
+        const resp = await fetch("data.json");
+        chatData = await resp.json();
+        await initNetwork();
+      } catch (error) {
+        console.error("Error loading data:", error);
+        chatData = {
+          trainingData: [],
+          responses: {
+            default: [
+              "I'm having trouble loading my training data. Please try again later."
+            ],
+          },
+          networkConfig: { hiddenLayers: [3], iterations: 2000, errorThresh: 0.005 },
+        };
+      }
+    }
+
+    async function initNetwork() {
+      net = new brain.NeuralNetwork({
+        hiddenLayers: chatData.networkConfig.hiddenLayers,
+      });
+      if (chatData.trainingData.length > 0) {
+        net.train(chatData.trainingData, {
+          iterations: chatData.networkConfig.iterations,
+          errorThresh: chatData.networkConfig.errorThresh,
+        });
+      }
+    }
+
+    function getRandomResponse(category) {
+      const options = chatData.responses[category] || chatData.responses.default;
+      return options[Math.floor(Math.random() * options.length)];
+    }
+
+    function tokenize(text) {
+      const tokens = {};
+      const words = text
+        .toLowerCase()
+        .replace(/[^\w\s]/g, "")
+        .split(/\s+/)
+        .filter((w) => w.length > 0);
+      words.forEach((word) => {
+        tokens[word] = 1;
+      });
+      return tokens;
+    }
+
+    function generateResponse(input) {
+      if (!net) return getRandomResponse("default");
+
+      const tokens = tokenize(input);
+      const output = net.run(tokens);
+
+      let maxCategory = "default";
+      let maxValue = 0;
+
+      for (const [category, value] of Object.entries(output)) {
+        if (value > maxValue && value > 0.5) {
+          maxValue = value;
+          maxCategory = category;
+        }
+      }
+      return getRandomResponse(maxCategory);
+    }
+
+    function formatTime() {
+      const now = new Date();
+      return now.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function renderMessages() {
+      const chat = chats[currentChatId];
+      if (!chat || chat.messages.length === 0) {
+        chatLog.innerHTML = `
+          <div class="empty-state" aria-label="Start a conversation">
+            <div class="empty-icon"><i class="fas fa-comments"></i></div>
+            <div>Start a conversation</div>
+          </div>`;
+        return;
+      }
+      chatLog.innerHTML = chat.messages
+        .map((msg) => {
+          const avatar =
+            msg.sender === "user"
+              ? "U"
+              : '<img src="assets/img/logo.png" alt="Nenode" onerror="this.outerHTML=\'N\'">';
+          const name = msg.sender === "user" ? "You" : "Nenode";
+          return `
+          <div class="message ${msg.sender}" role="article" aria-label="${name} message">
+            <div class="message-avatar" aria-hidden="true">${avatar}</div>
+            <div class="message-text">${escapeHtml(msg.text)}</div>
+          </div>
+        `;
+        })
+        .join("");
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function addMessage(text, sender) {
+      if (!currentChatId) currentChatId = "default";
+      if (!chats[currentChatId]) {
+        chats[currentChatId] = {
+          id: currentChatId,
+          title: "Chat",
+          messages: [],
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        };
+      }
+      const message = {
+        text,
+        sender,
+        time: formatTime(),
+      };
+      chats[currentChatId].messages.push(message);
+      chats[currentChatId].updatedAt = Date.now();
+      renderMessages();
+    }
+
+    function showTypingIndicator() {
+      const indicator = document.createElement("div");
+      indicator.className = "message bot typing-indicator";
+      indicator.id = "typing-indicator";
+      indicator.setAttribute("aria-live", "polite");
+      indicator.setAttribute("aria-label", "Nenode is typing");
+      indicator.innerHTML = `
+        <div class="message-avatar" aria-hidden="true">
+          <img src="assets/img/logo.png" alt="Nenode" onerror="this.outerHTML='N'">
+        </div>
+        <div class="typing-dots" style="display:flex;gap:5px;align-items:center;padding:0.5rem 0.75rem;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:1rem;margin-left:30px;">
+          <div style="width:7px;height:7px;border-radius:50%;background:var(--accent);animation:typingBounce 1.4s infinite ease-in-out;animation-delay:0s;"></div>
+          <div style="width:7px;height:7px;border-radius:50%;background:var(--accent);animation:typingBounce 1.4s infinite ease-in-out;animation-delay:0.2s;"></div>
+          <div style="width:7px;height:7px;border-radius:50%;background:var(--accent);animation:typingBounce 1.4s infinite ease-in-out;animation-delay:0.4s;"></div>
+        </div>
+      `;
+      chatLog.appendChild(indicator);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+      const indicator = document.getElementById("typing-indicator");
+      if (indicator) indicator.remove();
+    }
+
+    async function handleSubmit(event) {
+      event.preventDefault();
+      const userMessage = chatInput.value.trim();
+      if (!userMessage) return;
+      chatInput.disabled = true;
+      sendBtn.disabled = true;
+      addMessage(userMessage, "user");
+      chatInput.value = "";
+      showTypingIndicator();
+      await new Promise((resolve) =>
+        setTimeout(resolve, 800 + Math.random() * 400)
+      );
+      const botResponse = generateResponse(userMessage);
+      removeTypingIndicator();
+      addMessage(botResponse, "bot");
+      chatInput.disabled = false;
+      sendBtn.disabled = false;
+      chatInput.focus();
+    }
+
+    chatForm.addEventListener("submit", handleSubmit);
+
+    async function init() {
+      await loadData();
+      renderMessages();
+    }
+    init();
+
+    // Typing bounce keyframes dynamically added (for the dots animation)
+    const styleEl = document.createElement("style");
+    styleEl.textContent = `
+      @keyframes typingBounce {
+        0%, 60%, 100% {
+          transform: translateY(0);
+          opacity: 0.3;
+        }
+        30% {
+          transform: translateY(-8px);
+          opacity: 1;
+        }
+      }
+    `;
+    document.head.appendChild(styleEl);
+  </script>
+</body>
+</html>
