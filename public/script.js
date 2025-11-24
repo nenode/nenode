@@ -1,4 +1,4 @@
-// Dark mode support (unchanged)
+// Dark mode support
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
   document.documentElement.classList.add('dark');
 }
@@ -24,7 +24,7 @@ const sendBtn = document.getElementById('send-btn');
 // Load data
 async function loadData() {
   try {
-    const response = await fetch('data.json');
+    const response = await fetch('intents.json');
     chatData = await response.json();
   } catch (error) {
     console.error('Error loading data:', error);
