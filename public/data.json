@@ -1,5 +1,6 @@
 {
   "trainingData": [
+    {"input":{"oh":1},"output":{"oh":1}},
     {"input":{"hello":1},"output":{"greeting":1}},
     {"input":{"hi":1},"output":{"greeting":1}},
     {"input":{"hey":1},"output":{"greeting":1}},
