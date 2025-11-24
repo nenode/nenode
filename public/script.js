@@ -183,5 +183,5 @@ async function handleSubmit(e) {
 // Event listeners
 chatForm.addEventListener('submit', handleSubmit);
 
-// Initialize app
+// Initialize the app
 loadData();
