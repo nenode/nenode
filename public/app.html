@@ -23,6 +23,7 @@
       --border: #e7e5e4;
       --shadow: rgba(0, 0, 0, 0.02);
       --header-bg: rgba(250, 250, 249, 0.8);
+      --sidebar-width: 280px;
     }
 
     .dark {
@@ -63,9 +64,223 @@
       transition: background 0.3s ease, color 0.3s ease;
     }
 
-    #chat-container {
-      width: 100%;
+    #app-container {
+      display: flex;
       height: 100vh;
+      width: 100%;
+      position: relative;
+    }
+
+    /* Sidebar */
+    #sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      z-index: 20;
+    }
+
+    #sidebar.hidden {
+      transform: translateX(-100%);
+    }
+
+    .sidebar-header {
+      padding: 1.25rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    #new-chat-btn {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    #new-chat-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    #new-chat-btn:active {
+      transform: translateY(0);
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem;
+    }
+
+    .sidebar-content::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar-content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    .chat-item {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.75rem 0.875rem;
+      margin-bottom: 0.25rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      position: relative;
+      group: chat-item;
+    }
+
+    .chat-item:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .chat-item.active {
+      background: var(--accent-light);
+      border-color: var(--accent);
+    }
+
+    .chat-item-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 0.375rem;
+      background: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .chat-item.active .chat-item-icon {
+      background: var(--accent);
+      color: white;
+    }
+
+    .chat-item-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .chat-item-title {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chat-item-title-input {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      border: 1px solid var(--accent);
+      border-radius: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      width: 100%;
+      outline: none;
+    }
+
+    .chat-item-date {
+      font-size: 0.6875rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-top: 0.125rem;
+    }
+
+    .chat-item-actions {
+      display: flex;
+      gap: 0.25rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .chat-item:hover .chat-item-actions {
+      opacity: 1;
+    }
+
+    .chat-item-action {
+      width: 1.75rem;
+      height: 1.75rem;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      border-radius: 0.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      transition: all 0.2s ease;
+    }
+
+    .chat-item-action:hover {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    .chat-item-action.delete:hover {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .dark .chat-item-action.delete:hover {
+      background: #450a0a;
+      color: #ef4444;
+    }
+
+    /* Sidebar toggle button */
+    #sidebar-toggle {
+      position: fixed;
+      top: 1.25rem;
+      left: 1rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      color: var(--text-primary);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      z-index: 30;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+
+    #sidebar-toggle:hover {
+      background: var(--bg-tertiary);
+    }
+
+    #chat-container {
+      flex: 1;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -494,9 +709,22 @@
     }
 
     /* Responsive */
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
+      #sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        z-index: 25;
+        box-shadow: 2px 0 8px var(--shadow);
+      }
+
+      #sidebar-toggle {
+        display: flex;
+      }
+
       header {
-        padding: 1rem 1.5rem;
+        padding: 1rem 1.5rem 1rem 4.5rem;
       }
 
       footer {
@@ -540,33 +768,51 @@
   </style>
 </head>
 <body>
-  <div id="chat-container">
-    <header>
-      <h1>Nenode</h1>
-      <div class="subtitle">Neural Network Chat</div>
-    </header>
+  <div id="app-container">
+    <button id="sidebar-toggle" aria-label="Toggle sidebar">
+      <i class="fas fa-bars"></i>
+    </button>
 
-    <div id="chat-log">
-      <div class="empty-state">
-        <div class="empty-icon"><i class="fas fa-comments"></i></div>
-        <div class="empty-text">Start a conversation</div>
-      </div>
-    </div>
-
-    <footer>
-      <form id="chat-form" autocomplete="off">
-        <input
-          type="text"
-          id="chat-input"
-          maxlength="200"
-          placeholder="Type a message..."
-          required
-        >
-        <button type="submit" id="send-btn" aria-label="Send message">
-          <i class="fas fa-arrow-right"></i>
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <button id="new-chat-btn">
+          <i class="fas fa-plus"></i>
+          <span>New Chat</span>
         </button>
-      </form>
-    </footer>
+      </div>
+      <div class="sidebar-content" id="chat-list">
+        <!-- Chat items will be dynamically added here -->
+      </div>
+    </aside>
+
+    <div id="chat-container">
+      <header>
+        <h1>Nenode</h1>
+        <div class="subtitle">Neural Network Chat</div>
+      </header>
+
+      <div id="chat-log">
+        <div class="empty-state">
+          <div class="empty-icon"><i class="fas fa-comments"></i></div>
+          <div class="empty-text">Start a conversation</div>
+        </div>
+      </div>
+
+      <footer>
+        <form id="chat-form" autocomplete="off">
+          <input
+            type="text"
+            id="chat-input"
+            maxlength="200"
+            placeholder="Type a message..."
+            required
+          >
+          <button type="submit" id="send-btn" aria-label="Send message">
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </form>
+      </footer>
+    </div>
   </div>
 
   <script>
@@ -586,13 +832,18 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', eve
 // Global variables
 let net;
 let chatData;
-let messageCount = 0;
+let currentChatId = null;
+let chats = {};
 
 // DOM elements
 const chatLog = document.getElementById('chat-log');
 const chatForm = document.getElementById('chat-form');
 const chatInput = document.getElementById('chat-input');
 const sendBtn = document.getElementById('send-btn');
+const chatList = document.getElementById('chat-list');
+const newChatBtn = document.getElementById('new-chat-btn');
+const sidebar = document.getElementById('sidebar');
+const sidebarToggle = document.getElementById('sidebar-toggle');
 
 // Load data and initialize network
 async function loadData() {
@@ -682,60 +933,286 @@ function formatTime() {
   });
 }
 
-// Add message to chat log
-function addMessage(text, sender, userInput = '') {
-  // Remove empty state on first message
-  if (messageCount === 0) {
-    chatLog.innerHTML = '';
+// Format date for chat list
+function formatDate(timestamp) {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diff = now - date;
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+  if (days === 0) return 'Today';
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return `${days} days ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// Generate chat title from first message
+function generateChatTitle(firstMessage) {
+  const maxLength = 30;
+  if (firstMessage.length <= maxLength) return firstMessage;
+  return firstMessage.substring(0, maxLength) + '...';
+}
+
+// Load chats from memory (in-memory storage for iframe environment)
+function loadChats() {
+  // Chats are stored in memory, so they persist during the session
+  // but will be lost on page reload
+  if (!chats || Object.keys(chats).length === 0) {
+    chats = {};
   }
-  messageCount++;
+}
 
-  const messageDiv = document.createElement('div');
-  messageDiv.className = `message ${sender}`;
-  messageDiv.dataset.messageId = messageCount;
-  if (userInput) {
-    messageDiv.dataset.userInput = userInput;
+// Save chats to memory (placeholder for future storage implementation)
+function saveChats() {
+  // In iframe environment, we keep chats in memory
+  // Data persists during the session but is lost on reload
+}
+
+// Create new chat
+function createNewChat() {
+  const chatId = Date.now().toString();
+  chats[chatId] = {
+    id: chatId,
+    title: 'New Chat',
+    messages: [],
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  };
+  saveChats();
+  switchToChat(chatId);
+  renderChatList();
+
+  // Close sidebar on mobile after creating new chat
+  if (window.innerWidth <= 768) {
+    sidebar.classList.add('hidden');
   }
+}
 
-  const avatar = sender === 'user' ? 'U' : '<img src="assets/img/logo.png" alt="Nenode">';
-  const name = sender === 'user' ? 'You' : 'Nenode';
+// Switch to a different chat
+function switchToChat(chatId) {
+  currentChatId = chatId;
+  renderMessages();
+  renderChatList();
+  chatInput.focus();
+}
 
-  const menuHtml = sender === 'bot' ? `
-    <div class="message-menu">
-      <button class="message-menu-btn" onclick="toggleMessageMenu(event)">
-        <i class="fas fa-ellipsis-v"></i>
-      </button>
-      <div class="message-menu-dropdown">
-        <button class="message-menu-item" onclick="editMessage(event)">
-          <i class="fas fa-edit"></i>
-          <span>Edit</span>
+// Render chat list in sidebar
+function renderChatList() {
+  const sortedChats = Object.values(chats).sort((a, b) => b.updatedAt - a.updatedAt);
+
+  chatList.innerHTML = sortedChats.map(chat => `
+    <div class="chat-item ${chat.id === currentChatId ? 'active' : ''}" data-chat-id="${chat.id}">
+      <div class="chat-item-icon">
+        <i class="fas fa-comment"></i>
+      </div>
+      <div class="chat-item-content">
+        <div class="chat-item-title">${escapeHtml(chat.title)}</div>
+        <div class="chat-item-date">${formatDate(chat.updatedAt)}</div>
+      </div>
+      <div class="chat-item-actions">
+        <button class="chat-item-action rename" onclick="renameChat(event, '${chat.id}')" aria-label="Rename chat">
+          <i class="fas fa-pen"></i>
         </button>
-        <button class="message-menu-item" onclick="copyMessage(event)">
-          <i class="fas fa-copy"></i>
-          <span>Copy</span>
-        </button>
-        <button class="message-menu-item" onclick="redoMessage(event)">
-          <i class="fas fa-redo"></i>
-          <span>Regenerate</span>
+        <button class="chat-item-action delete" onclick="deleteChat(event, '${chat.id}')" aria-label="Delete chat">
+          <i class="fas fa-trash"></i>
         </button>
       </div>
     </div>
-  ` : '';
+  `).join('');
 
-  messageDiv.innerHTML = `
-    <div class="message-avatar">${avatar}</div>
-    <div class="message-content">
-      <div class="message-header">
-        ${name}
-        ${menuHtml}
+  // Add click event listeners to chat items
+  document.querySelectorAll('.chat-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      if (!e.target.closest('.chat-item-actions')) {
+        switchToChat(item.dataset.chatId);
+        // Close sidebar on mobile
+        if (window.innerWidth <= 768) {
+          sidebar.classList.add('hidden');
+        }
+      }
+    });
+  });
+}
+
+// Render messages in current chat
+function renderMessages() {
+  if (!currentChatId || !chats[currentChatId]) {
+    chatLog.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon"><i class="fas fa-comments"></i></div>
+        <div class="empty-text">Start a conversation</div>
       </div>
-      <div class="message-text">${text}</div>
-      <div class="message-time">${formatTime()}</div>
+    `;
+    return;
+  }
+
+  const messages = chats[currentChatId].messages;
+
+  if (messages.length === 0) {
+    chatLog.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon"><i class="fas fa-comments"></i></div>
+        <div class="empty-text">Start a conversation</div>
+      </div>
+    `;
+    return;
+  }
+
+  chatLog.innerHTML = messages.map((msg, index) => {
+    const avatar = msg.sender === 'user' ? 'U' : '<img src="assets/img/logo.png" alt="Nenode" onerror="this.outerHTML=\'N\'">';
+    const name = msg.sender === 'user' ? 'You' : 'Nenode';
+
+    const menuHtml = msg.sender === 'bot' ? `
+      <div class="message-menu">
+        <button class="message-menu-btn" onclick="toggleMessageMenu(event)">
+          <i class="fas fa-ellipsis-v"></i>
+        </button>
+        <div class="message-menu-dropdown">
+          <button class="message-menu-item" onclick="editMessage(event, ${index})">
+            <i class="fas fa-edit"></i>
+            <span>Edit</span>
+          </button>
+          <button class="message-menu-item" onclick="copyMessage(event, ${index})">
+            <i class="fas fa-copy"></i>
+            <span>Copy</span>
+          </button>
+          <button class="message-menu-item" onclick="redoMessage(event, ${index})">
+            <i class="fas fa-redo"></i>
+            <span>Regenerate</span>
+          </button>
+        </div>
+      </div>
+    ` : '';
+
+    return `
+      <div class="message ${msg.sender}" data-index="${index}">
+        <div class="message-avatar">${avatar}</div>
+        <div class="message-content">
+          <div class="message-header">
+            ${name}
+            ${menuHtml}
+          </div>
+          <div class="message-text">${escapeHtml(msg.text)}</div>
+          <div class="message-time">${msg.time}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Add message to current chat
+function addMessage(text, sender, userInput = '') {
+  if (!currentChatId) {
+    createNewChat();
+  }
+
+  const message = {
+    text,
+    sender,
+    time: formatTime(),
+    userInput
+  };
+
+  chats[currentChatId].messages.push(message);
+  chats[currentChatId].updatedAt = Date.now();
+
+  // Update title if this is the first user message
+  if (sender === 'user' && chats[currentChatId].messages.filter(m => m.sender === 'user').length === 1) {
+    chats[currentChatId].title = generateChatTitle(text);
+  }
+
+  saveChats();
+  renderMessages();
+  renderChatList();
+}
+
+// Delete chat
+function deleteChat(event, chatId) {
+  event.stopPropagation();
+
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+  modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50;';
+
+  modal.innerHTML = `
+    <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 4px 12px var(--shadow); max-width: 400px; width: 90%; margin: 1rem;">
+      <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">Delete Chat?</h3>
+      <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1.5rem;">This action cannot be undone. The chat and all its messages will be permanently deleted.</p>
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button id="cancel-delete" style="padding: 0.5rem 1rem; background: var(--bg-tertiary); color: var(--text-primary); border: none; border-radius: 0.375rem; font-family: 'Outfit', sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer;">Cancel</button>
+        <button id="confirm-delete" style="padding: 0.5rem 1rem; background: #dc2626; color: white; border: none; border-radius: 0.375rem; font-family: 'Outfit', sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer;">Delete</button>
+      </div>
     </div>
   `;
 
-  chatLog.appendChild(messageDiv);
-  chatLog.scrollTop = chatLog.scrollHeight;
+  document.body.appendChild(modal);
+
+  const confirmBtn = modal.querySelector('#confirm-delete');
+  const cancelBtn = modal.querySelector('#cancel-delete');
+
+  confirmBtn.addEventListener('click', () => {
+    delete chats[chatId];
+    saveChats();
+
+    if (currentChatId === chatId) {
+      const remainingChats = Object.keys(chats);
+      if (remainingChats.length > 0) {
+        switchToChat(remainingChats[0]);
+      } else {
+        currentChatId = null;
+        renderMessages();
+      }
+    }
+
+    renderChatList();
+    modal.remove();
+  });
+
+  cancelBtn.addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+}
+
+// Rename chat
+function renameChat(event, chatId) {
+  event.stopPropagation();
+
+  const chatItem = event.target.closest('.chat-item');
+  const titleDiv = chatItem.querySelector('.chat-item-title');
+  const currentTitle = chats[chatId].title;
+
+  titleDiv.innerHTML = `<input type="text" class="chat-item-title-input" value="${escapeHtml(currentTitle)}" maxlength="50">`;
+
+  const input = titleDiv.querySelector('input');
+  input.focus();
+  input.select();
+
+  const saveRename = () => {
+    const newTitle = input.value.trim() || currentTitle;
+    chats[chatId].title = newTitle;
+    saveChats();
+    renderChatList();
+  };
+
+  input.addEventListener('blur', saveRename);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      input.blur();
+    } else if (e.key === 'Escape') {
+      renderChatList();
+    }
+  });
 }
 
 // Toggle message menu
@@ -766,9 +1243,9 @@ document.addEventListener('click', () => {
 });
 
 // Edit message
-function editMessage(event) {
+function editMessage(event, index) {
   event.stopPropagation();
-  const messageDiv = event.target.closest('.message');
+  const messageDiv = document.querySelector(`.message[data-index="${index}"]`);
   const messageText = messageDiv.querySelector('.message-text');
 
   // Close menu
@@ -790,6 +1267,12 @@ function editMessage(event) {
   // Handle blur to save
   const handleBlur = () => {
     messageText.contentEditable = false;
+    const newText = messageText.textContent.trim();
+    if (newText) {
+      chats[currentChatId].messages[index].text = newText;
+      saveChats();
+      renderMessages();
+    }
     messageText.removeEventListener('blur', handleBlur);
   };
 
@@ -805,10 +1288,9 @@ function editMessage(event) {
 }
 
 // Copy message
-async function copyMessage(event) {
+async function copyMessage(event, index) {
   event.stopPropagation();
-  const messageDiv = event.target.closest('.message');
-  const messageText = messageDiv.querySelector('.message-text').textContent;
+  const messageText = chats[currentChatId].messages[index].text;
 
   try {
     await navigator.clipboard.writeText(messageText);
@@ -827,6 +1309,7 @@ async function copyMessage(event) {
 
   // Close menu after short delay
   setTimeout(() => {
+    const messageDiv = document.querySelector(`.message[data-index="${index}"]`);
     const menuBtn = messageDiv.querySelector('.message-menu-btn');
     menuBtn.classList.remove('active');
     menuBtn.nextElementSibling.classList.remove('show');
@@ -834,21 +1317,20 @@ async function copyMessage(event) {
 }
 
 // Redo message
-async function redoMessage(event) {
+async function redoMessage(event, index) {
   event.stopPropagation();
-  const messageDiv = event.target.closest('.message');
-  const userInput = messageDiv.dataset.userInput;
+  const userInput = chats[currentChatId].messages[index].userInput;
 
   if (!userInput) return;
 
   // Close menu
+  const messageDiv = document.querySelector(`.message[data-index="${index}"]`);
   const btn = messageDiv.querySelector('.message-menu-btn');
   btn.classList.remove('active');
   btn.nextElementSibling.classList.remove('show');
 
-  // Disable the message temporarily
+  // Show loading state
   const messageText = messageDiv.querySelector('.message-text');
-  const originalText = messageText.textContent;
   messageText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Regenerating...';
 
   // Generate new response
@@ -856,11 +1338,10 @@ async function redoMessage(event) {
   const newResponse = generateResponse(userInput);
 
   // Update message
-  messageText.textContent = newResponse;
-
-  // Update timestamp
-  const timeDiv = messageDiv.querySelector('.message-time');
-  timeDiv.textContent = formatTime();
+  chats[currentChatId].messages[index].text = newResponse;
+  chats[currentChatId].messages[index].time = formatTime();
+  saveChats();
+  renderMessages();
 }
 
 // Show typing indicator
@@ -919,11 +1400,39 @@ async function handleSubmit(e) {
   chatInput.focus();
 }
 
+// Sidebar toggle
+sidebarToggle.addEventListener('click', () => {
+  sidebar.classList.toggle('hidden');
+});
+
 // Event listeners
 chatForm.addEventListener('submit', handleSubmit);
+newChatBtn.addEventListener('click', createNewChat);
 
 // Initialize app
-loadData();
+async function init() {
+  await loadData();
+  loadChats();
+
+  // If no chats exist, create a new one
+  if (Object.keys(chats).length === 0) {
+    createNewChat();
+  } else {
+    // Load the most recent chat
+    const sortedChats = Object.values(chats).sort((a, b) => b.updatedAt - a.updatedAt);
+    currentChatId = sortedChats[0].id;
+    renderMessages();
+  }
+
+  renderChatList();
+
+  // Hide sidebar on mobile by default
+  if (window.innerWidth <= 768) {
+    sidebar.classList.add('hidden');
+  }
+}
+
+init();
   </script>
 
 </body>
