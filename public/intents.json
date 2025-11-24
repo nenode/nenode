@@ -204,6 +204,17 @@
         "Everything's running smoothly!"
       ]
     },
+        {
+      "tag": "oh",
+      "patterns": [
+   
+        "oh"
+      ],
+      "responses": [
+        "Sorry"
+      ]
+    },
+
     {
       "tag": "identity",
       "patterns": [
