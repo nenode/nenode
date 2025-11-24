@@ -24,7 +24,7 @@ const sendBtn = document.getElementById('send-btn');
 // Load data
 async function loadData() {
   try {
-    const response = await fetch('intents.json');
+    const response = await fetch('intents.json'); // Fetch the data (either intents.json or data.json)
     chatData = await response.json();
   } catch (error) {
     console.error('Error loading data:', error);
