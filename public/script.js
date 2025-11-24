@@ -12,7 +12,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', eve
 });
 
 // Global variables
-let chatData;          // will hold { intents: [...] }
+let chatData;
 let messageCount = 0;
 
 // DOM elements
@@ -24,7 +24,7 @@ const sendBtn = document.getElementById('send-btn');
 // Load data
 async function loadData() {
   try {
-    const response = await fetch('intents.json'); // <-- use your new file
+    const response = await fetch('data.json');
     chatData = await response.json();
   } catch (error) {
     console.error('Error loading data:', error);
