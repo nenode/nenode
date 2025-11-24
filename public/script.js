@@ -1,4 +1,4 @@
-// Dark mode support
+// Dark mode support (unchanged)
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
   document.documentElement.classList.add('dark');
 }
@@ -12,8 +12,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', eve
 });
 
 // Global variables
-let net;
-let chatData;
+let chatData;          // will hold { intents: [...] }
 let messageCount = 0;
 
 // DOM elements
@@ -22,82 +21,79 @@ const chatForm = document.getElementById('chat-form');
 const chatInput = document.getElementById('chat-input');
 const sendBtn = document.getElementById('send-btn');
 
-// Load data and initialize network
+// Load data
 async function loadData() {
   try {
-    const response = await fetch('data.json');
+    const response = await fetch('intents.json'); // <-- use your new file
     chatData = await response.json();
-    await initNetwork();
   } catch (error) {
     console.error('Error loading data:', error);
     chatData = {
-      trainingData: [],
-      responses: {
-        default: ["I'm having trouble loading my training data. Please try again later."]
-      },
-      networkConfig: {
-        hiddenLayers: [3],
-        iterations: 2000,
-        errorThresh: 0.005
-      }
+      intents: [
+        {
+          tag: 'default',
+          patterns: [],
+          responses: ["I'm having trouble loading my training data. Please try again later."]
+        }
+      ]
     };
   }
 }
 
-// Initialize Brain.js neural network
-async function initNetwork() {
-  net = new brain.NeuralNetwork({
-    hiddenLayers: chatData.networkConfig.hiddenLayers
-  });
-
-  if (chatData.trainingData.length > 0) {
-    net.train(chatData.trainingData, {
-      iterations: chatData.networkConfig.iterations,
-      errorThresh: chatData.networkConfig.errorThresh,
-    });
+// Get random response for a tag
+function getRandomResponse(tag) {
+  if (!chatData || !chatData.intents) {
+    return "I'm not ready yet, please try again.";
   }
+
+  const intent = chatData.intents.find(i => i.tag === tag);
+  const fallback = chatData.intents.find(i => i.tag === 'default');
+
+  const responses = intent && intent.responses && intent.responses.length
+    ? intent.responses
+    : (fallback ? fallback.responses : ["I'm not sure what to say."]);
+
+  return responses[Math.floor(Math.random() * responses.length)];
 }
 
-// Get random response from category
-function getRandomResponse(category) {
-  const options = chatData.responses[category] || chatData.responses.default;
-  return options[Math.floor(Math.random() * options.length)];
-}
-
-// Tokenize text input
+// Simple tokenizer
 function tokenize(text) {
-  const tokens = {};
-  const words = text.toLowerCase()
+  return text
+    .toLowerCase()
     .replace(/[^\w\s]/g, '')
     .split(/\s+/)
-    .filter(w => w.length > 0);
-
-  words.forEach(word => {
-    tokens[word] = 1;
-  });
-
-  return tokens;
+    .filter(Boolean);
 }
 
-// Generate response using neural network
+// Very simple intent matcher:
+// score = number of pattern words found in user input (max over all patterns)
 function generateResponse(input) {
-  if (!net) return getRandomResponse('default');
+  if (!chatData || !chatData.intents) {
+    return "I'm not ready yet, please try again.";
+  }
 
-  const tokens = tokenize(input);
-  const output = net.run(tokens);
+  const words = tokenize(input);
 
-  // Find the highest confidence category
-  let maxCategory = 'default';
-  let maxValue = 0;
+  let bestTag = 'default';
+  let bestScore = 0;
 
-  for (const [category, value] of Object.entries(output)) {
-    if (value > maxValue && value > 0.5) {
-      maxValue = value;
-      maxCategory = category;
+  for (const intent of chatData.intents) {
+    for (const pattern of intent.patterns || []) {
+      const patternWords = tokenize(pattern);
+      let score = 0;
+
+      for (const w of patternWords) {
+        if (words.includes(w)) score++;
+      }
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestTag = intent.tag;
+      }
     }
   }
 
-  return getRandomResponse(maxCategory);
+  return getRandomResponse(bestTag);
 }
 
 // Format current time
@@ -112,7 +108,6 @@ function formatTime() {
 
 // Add message to chat log
 function addMessage(text, sender) {
-  // Remove empty state on first message
   if (messageCount === 0) {
     chatLog.innerHTML = '';
   }
@@ -156,9 +151,7 @@ function showTypingIndicator() {
 // Remove typing indicator
 function removeTypingIndicator() {
   const indicator = document.getElementById('typing-indicator');
-  if (indicator) {
-    indicator.remove();
-  }
+  if (indicator) indicator.remove();
 }
 
 // Handle form submission
@@ -168,26 +161,20 @@ async function handleSubmit(e) {
   const userMessage = chatInput.value.trim();
   if (!userMessage) return;
 
-  // Disable input while processing
   chatInput.disabled = true;
   sendBtn.disabled = true;
 
-  // Add user message
   addMessage(userMessage, 'user');
   chatInput.value = '';
 
-  // Show typing indicator
   showTypingIndicator();
 
-  // Simulate thinking time
   await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
 
-  // Generate and add bot response
   const botResponse = generateResponse(userMessage);
   removeTypingIndicator();
   addMessage(botResponse, 'bot');
 
-  // Re-enable input
   chatInput.disabled = false;
   sendBtn.disabled = false;
   chatInput.focus();
