@@ -8,7 +8,7 @@
 
 Nenode is a simple, basic, lightweight and [open-source](LICENSE) neural network. It runs a simple AI and contains datasets and trainers and more.
 
-The aim of Nenode is to create the best open source AI trainer, for new AI businesses to use as a starting point, then to turn into a large model.
+The aim of Nenode is to create the best open source AI trainer, to fork into large models.
 
 ![image](https://github.com/user-attachments/assets/0fa934c6-db89-4101-8f29-2ebcb629044e)
 
