@@ -26,7 +26,7 @@ We use [brain.js](https://brain.js.org) for our neural network organiser. The tr
 ![image](https://github.com/user-attachments/assets/c20baeb0-b072-4268-bb82-12dc5c5026b4)
 
 
-_Both images created with NN-SVG_
+> _Both images created with NN-SVG_
 
 ## Supported Domains
 
