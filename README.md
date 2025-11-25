@@ -27,3 +27,9 @@ We use [brain.js](https://brain.js.org) for our neural network organiser. The tr
 
 
 _Both images created with NN-SVG_
+
+## Supported Domains
+
+Here is a list of supported domains:
+- [nenode.pages.dev](https://nenode.pages.dev)
+- [nenode.github.io/nenode](https://nenode.github.io/nenode)
