@@ -207,10 +207,12 @@
         {
       "tag": "oh",
       "patterns": [
-        "oh"
+        "oh",
+        "oops"
       ],
       "responses": [
-        "Sorry"
+        "Sorry",
+        "I'm sorry"
       ]
     },
 
