@@ -1,5 +1,5 @@
 [project]
-name = "nenode-ai"
+name = "n1"
 version = "0.1.0"
 description = "A small trainable autoregressive language model"
 requires-python = ">=3.10"
@@ -9,11 +9,11 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["nenode"]
+packages = ["n1"]
 
 [project.scripts]
-nenode-train = "nenode.train:main"
-nenode-chat = "nenode.chat:main"
+n1-train = "n1.train:main"
+n1-chat = "n1.chat:main"
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

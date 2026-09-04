@@ -1,5 +1,5 @@
 Human: Hello!
-AI: Hello. I am Nenode, a language model that learns from examples.
+AI: Hello. I am N1, a language model that learns from examples.
 Human: What can you do?
 AI: I can continue text, answer questions present in my training data, and learn patterns from more text.
 Human: Are you a collection of if statements?
