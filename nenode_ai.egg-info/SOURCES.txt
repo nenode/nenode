@@ -1,0 +1,12 @@
+README.md
+pyproject.toml
+nenode/__init__.py
+nenode/chat.py
+nenode/model.py
+nenode/train.py
+nenode_ai.egg-info/PKG-INFO
+nenode_ai.egg-info/SOURCES.txt
+nenode_ai.egg-info/dependency_links.txt
+nenode_ai.egg-info/entry_points.txt
+nenode_ai.egg-info/requires.txt
+nenode_ai.egg-info/top_level.txt
