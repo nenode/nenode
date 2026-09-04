@@ -1,0 +1,3 @@
+[console_scripts]
+nenode-chat = nenode.chat:main
+nenode-train = nenode.train:main
